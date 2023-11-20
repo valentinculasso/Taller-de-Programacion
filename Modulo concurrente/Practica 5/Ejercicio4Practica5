@@ -1,0 +1,131 @@
+programa Ejercicio4Practica5
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso recolectar(E avenida: numero; E calle: numero; E avAct: numero; E caAct: numero)
+  comenzar
+    BloquearEsquina(avenida, calle)
+    Pos(avenida, calle)
+    juntarFlores
+    Pos(avAct, caAct) {es la posicion inicial}
+    LiberarEsquina(avenida, calle)
+  fin
+  proceso EnviarIDs
+  comenzar
+    EnviarMensaje(1, robot1)
+    EnviarMensaje(2, robot2)
+    EnviarMensaje(3, robot3)
+  fin
+  proceso depositarFlores(E avAct: numero; E caAct: numero)
+  comenzar
+    BloquearEsquina(10, 10)
+    Pos(10, 10)
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+    Pos(avAct, caAct)
+    LiberarEsquina(10, 10)
+  fin
+  proceso EnviarIntento(E id: numero; E avenida: numero; E calle: numero)
+  comenzar
+    si(id = 1)
+      EnviarMensaje(V, robot1)
+      EnviarMensaje(avenida, robot1)
+      EnviarMensaje(calle, robot1)
+    sino
+      si(id = 2)
+        EnviarMensaje(V, robot2)
+        EnviarMensaje(avenida, robot2)
+        EnviarMensaje(calle, robot2)
+      sino  
+        si(id = 3)
+          EnviarMensaje(V, robot3)
+          EnviarMensaje(avenida, robot3)
+          EnviarMensaje(calle, robot3)
+  fin
+areas
+  cuadrante: AreaPC(40, 40, 60, 60)
+  esquina10: AreaC(10, 10, 10, 10)
+  area1: AreaP(1, 1, 1, 1)
+  area2: AreaP(2, 1, 2, 1)
+  area3: AreaP(3, 1, 3, 1)
+  areaFisc: AreaP(4, 1, 4, 1)
+robots
+  robot floreros
+  variables
+    avenida, calle, avAct, caAct, id: numero
+    puedo: boolean
+  comenzar
+    avAct:= PosAv
+    caAct:= PosCa
+    puedo:= V
+    RecibirMensaje(id, fiscalizador)
+    mientras(puedo)
+      RecibirMensaje(puedo, fiscalizador)
+      si(puedo)
+        RecibirMensaje(avenida, fiscalizador)
+        RecibirMensaje(calle, fiscalizador)
+        recolectar(avenida, calle, avAct, caAct)
+        EnviarMensaje(id, fiscalizador)
+    depositarFlores(avAct, caAct)
+    EnviarMensaje(id, fiscalizador)
+  fin
+  robot fiscalizador
+  variables
+    id, avenida, calle, avActual, caActual, cantFlores: numero
+  comenzar
+    avActual:= PosAv
+    caActual:= PosCa
+    cantFlores:= 0
+    EnviarIDs
+    repetir 8
+      Random(id, 1, 3)
+      Random(avenida, 40, 60)
+      Random(calle, 40, 60)
+      EnviarIntento(id, avenida, calle)
+      si(id = 1) {Esto lo hago para que los robots vayan de 1 en 1}
+        RecibirMensaje(id, robot1)
+      sino
+        si(id = 2)
+          RecibirMensaje(id, robot2)
+        sino
+          si(id = 3)
+            RecibirMensaje(id, robot3)
+    {podria modularizarlo}
+    EnviarMensaje(F, robot1)
+    EnviarMensaje(F, robot2)
+    EnviarMensaje(F, robot3)
+    {podria modularizarlo}
+    repetir 3
+      RecibirMensaje(id, *) {Espero a que los robots depositen las flores en (10, 10)
+    Pos(10, 10) {Por alguna razon no me mueve a la Pos(10,10)}
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores:= cantFlores + 1
+    Pos(avActual, caActual)
+    Informar(cantFlores)
+  fin
+variables
+  robot1: floreros
+  robot2: floreros
+  robot3: floreros
+  fiscalizador: fiscalizador
+comenzar
+  AsignarArea(robot1, cuadrante)
+  AsignarArea(robot1, area1)
+  AsignarArea(robot1, esquina10)
+  AsignarArea(robot2, cuadrante)
+  AsignarArea(robot2, area2)
+  AsignarArea(robot2, esquina10)
+  AsignarArea(robot3, cuadrante)
+  AsignarArea(robot3, area3)
+  AsignarArea(robot3, esquina10)
+  AsignarArea(fiscalizador, areaFisc)
+  AsignarArea(fiscalizador, esquina10)
+  Iniciar(robot1, 1, 1)
+  Iniciar(robot2, 2, 1)
+  Iniciar(robot3, 3, 1)
+  Iniciar(fiscalizador, 4, 1)
+fin

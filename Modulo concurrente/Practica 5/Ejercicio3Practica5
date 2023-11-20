@@ -1,0 +1,110 @@
+programa Ejercicio3Practica5
+procesos
+  proceso juntarFlores(ES flores: numero; E cant: numero)
+  comenzar
+    mientras((HayFlorEnLaEsquina)&(flores < cant))
+      tomarFlor
+      flores:= flores + 1
+  fin
+  proceso depositarFlores
+  comenzar
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+  fin
+  proceso depositarEsquina(E id: numero)
+  variables
+    avAct, caAct: numero
+  comenzar
+    avAct:= PosAv
+    caAct:= PosCa
+    BloquearEsquina(10, 10)
+    Pos(10, 10)
+    depositarFlores {si o si deposita 10 flores}
+    Pos(avAct, caAct)
+    LiberarEsquina(10, 10)
+    EnviarMensaje(id, cosechador)
+    EnviarMensaje(V, cosechador)
+  fin
+  proceso AsignarIDs
+  comenzar
+    EnviarMensaje(1, robot1)
+    EnviarMensaje(2, robot2)
+  fin
+areas
+  area1: AreaP(1, 3, 100, 3)
+  area2: AreaP(1, 4, 100, 4)
+  areaCosechador: AreaP(1, 5, 1, 5)
+  areaDeposito: AreaC(10, 10, 10, 10)
+robots
+  robot recolectores
+  variables
+    flores, cant, esquina, id: numero
+  comenzar
+    cant:= 10
+    esquina:= 0
+    RecibirMensaje(id, cosechador)
+    derecha
+    mientras(PosAv < 100)
+      juntarFlores(flores, cant)
+      si(flores = cant)
+        depositarEsquina(id)
+        juntarFlores(flores, cant) {esto lo puedo poner, por si en una esquina hay mas de 10 flores}
+        flores:= 0
+      sino
+        si(esquina = 5)
+          depositarEsquina(id)
+          esquina:= 0
+      mover
+      esquina:= esquina + 1
+    {Si yo quiero incluir la ultima esquina debo juntar flores y mandarlas a la esquina 10 10}
+    juntarFlores(flores, cant)
+    depositarEsquina(id)
+    {    -------------    }
+    EnviarMensaje(id, cosechador)
+    EnviarMensaje(F, cosechador)
+  fin
+  robot cosechador
+  variables
+    puedo: boolean
+    flores, id, contador, av, ca: numero
+  comenzar
+    flores:= 0
+    contador:= 0
+    av:= PosAv
+    ca:= PosCa
+    AsignarIDs
+    mientras(contador < 2)
+      RecibirMensaje(id, *)
+      si(id = 1)
+        RecibirMensaje(puedo, robot1)
+        si(puedo = F)
+          contador:= contador + 1
+      sino
+        RecibirMensaje(puedo, robot2)
+        si(puedo = F)
+          contador:= contador + 1
+     {esto de abajo lo podria modularizar}
+      BloquearEsquina(10, 10)
+      Pos(10, 10)
+      mientras(HayFlorEnLaEsquina)
+        tomarFlor
+        flores:= flores + 1
+      Pos(av, ca)
+      LiberarEsquina(10, 10)
+    Informar(flores)
+  fin
+variables
+  robot1: recolectores
+  robot2: recolectores
+  cosechador: cosechador
+comenzar
+  AsignarArea(robot1, area1)
+  AsignarArea(robot1, areaDeposito)
+  AsignarArea(robot2, area2)
+  AsignarArea(robot2, areaDeposito)
+  AsignarArea(cosechador, areaCosechador)
+  AsignarArea(cosechador, areaDeposito)
+  Iniciar(robot1, 1, 3)
+  Iniciar(robot2, 1, 4)
+  Iniciar(cosechador, 1, 5)
+fin

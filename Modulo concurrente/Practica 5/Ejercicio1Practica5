@@ -1,0 +1,127 @@
+programa Ejercicio1Practica5
+procesos
+  proceso juntarFlores(ES flores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+  proceso juntarPapeles(ES papeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:= papeles + 1
+  fin
+  proceso EnviarIDs
+  comenzar
+    EnviarMensaje(1, robot1)
+    EnviarMensaje(2, robot2)
+    EnviarMensaje(3, robot3)
+    EnviarMensaje(4, robot4)
+  fin
+areas
+  areaRojo1: AreaPC(2, 1, 2, 100)
+  areaRojo2: AreaPC(3, 1, 3, 100)
+  areaAzul1: AreaPC(1, 98, 100, 98)
+  areaAzul2: AreaPC(1, 99, 100, 99)
+  areaFisc: AreaP(1, 1, 1, 1)
+robots
+  robot rojo
+  variables
+    flores, id: numero
+  comenzar
+    flores:= 0
+    RecibirMensaje(id, fiscalizador)
+    repetir 96
+      juntarFlores(flores)
+      mover
+    si(id = 1)
+      BloquearEsquina(1, 98)
+      mover
+      juntarFlores(flores)
+      BloquearEsquina(1, 99)
+      mover
+      LiberarEsquina(1, 98)
+      juntarFlores(flores)
+      mover
+      LiberarEsquina(1, 99)
+      juntarFlores(flores)
+    sino
+      BloquearEsquina(2, 98)
+      mover
+      juntarFlores(flores)
+      BloquearEsquina(2, 99)
+      mover
+      LiberarEsquina(2, 98)
+      juntarFlores(flores)
+      mover
+      LiberarEsquina(2, 99)
+      juntarFlores(flores)
+    EnviarMensaje(flores, fiscalizador)
+  fin
+  robot azul
+  variables
+    papeles, id: numero
+  comenzar
+    papeles:= 0
+    RecibirMensaje(id, fiscalizador)
+    derecha
+    si(id = 3)
+      BloquearEsquina(1, 98)
+      mover
+      juntarPapeles(papeles)
+      BloquearEsquina(2, 98)
+      mover
+      LiberarEsquina(1, 98)
+      juntarPapeles(papeles)
+      mover
+      LiberarEsquina(2, 98)
+    sino
+      BloquearEsquina(1, 99)
+      mover
+      juntarPapeles(papeles)
+      BloquearEsquina(2, 99)
+      mover
+      LiberarEsquina(1, 99)
+      juntarPapeles(papeles)
+      mover
+      LiberarEsquina(2, 99)
+    repetir 96
+      juntarPapeles(papeles)
+      mover
+    EnviarMensaje(papeles, fiscalizador)
+  fin
+  robot fiscalizador
+  variables
+    flores1, flores2, papeles1, papeles2, totalFlores, totalPapeles: numero
+  comenzar
+    EnviarIDs
+    RecibirMensaje(flores1, robot1)
+    RecibirMensaje(flores2, robot2)
+    RecibirMensaje(papeles1, robot3)
+    RecibirMensaje(papeles2, robot4)
+    totalFlores:= flores1 + flores2
+    totalPapeles:= papeles1 + papeles2
+    si(totalFlores > totalPapeles)
+      Informar(1)
+    sino
+      Informar(2)
+  fin
+variables
+  robot1: rojo
+  robot2: rojo
+  robot3: azul
+  robot4: azul
+  fiscalizador: fiscalizador
+comenzar
+  AsignarArea(fiscalizador, areaFisc)
+  AsignarArea(robot1, areaRojo1)
+  AsignarArea(robot2, areaRojo2)
+  AsignarArea(robot3, areaAzul1)
+  AsignarArea(robot4, areaAzul2)
+  Iniciar(fiscalizador, 1, 1)
+  Iniciar(robot1, 2, 1)
+  Iniciar(robot2, 3, 1)
+  Iniciar(robot3, 1, 98)
+  Iniciar(robot4, 1, 99)
+fin

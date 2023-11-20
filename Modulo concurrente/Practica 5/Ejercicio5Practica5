@@ -1,0 +1,92 @@
+programa Ejercicio5Practica5
+procesos
+  proceso depositarPapeles(E cantidad: numero)
+  variables
+    avAct, caAct: numero
+  comenzar
+    avAct:= PosAv
+    caAct:= PosCa
+    BloquearEsquina(100, 1)
+    Pos(100, 1)
+    repetir cantidad
+      depositarPapel
+    Pos(avAct, caAct)
+    LiberarEsquina(100, 1)
+  fin
+  proceso buscarPapeles(E cantidad: numero)
+  variables
+    avAct, caAct: numero
+  comenzar
+    avAct:= PosAv
+    caAct:= PosCa
+    BloquearEsquina(100, 1)
+    Pos(100, 1)
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+    Pos(avAct, caAct)
+    LiberarEsquina(100, 1)
+    mientras(HayPapelEnLaBolsa)
+      depositarPapel
+  fin
+  proceso EnviarIDs
+  comenzar
+    EnviarMensaje(1, robot1)
+    EnviarMensaje(2, robot1)
+    EnviarMensaje(3, robot1)
+  fin
+areas
+  esquina: AreaC(100, 1, 100, 1)
+  area1: AreaP(10, 1, 10, 1)
+  area2: AreaP(11, 1, 11, 1)
+  area3: AreaP(12, 1, 12, 1)
+  areaServidor: AreaP(13, 1, 13, 1)
+robots
+  robot servidor
+  variables
+    cantidad, id: numero
+    puedo: boolean
+  comenzar
+    EnviarIDs
+    repetir 12
+      RecibirMensaje(id, *) {Un robot X envia la solicitud mandando ID}
+      Random(cantidad, 1, 5)
+      depositarPapeles(cantidad)
+      si(id = 1) {Envio la cantidad que le deposite al cliente (lo podria modularizar)}
+        EnviarMensaje(cantidad, robot1)
+      sino
+        si(id = 2)
+          EnviarMensaje(cantidad, robot2)
+        sino
+          si(id = 3)
+            EnviarMensaje(cantidad, robot3)
+  fin
+  robot clientes
+  variables
+    id, cantidad: numero
+    ok: boolean
+  comenzar
+    RecibirMensaje(id, servidor)
+    repetir 4
+      EnviarMensaje(id, servidor)
+      RecibirMensaje(cantidad, servidor)
+      buscarPapeles(cantidad)
+  fin
+variables
+  robot1: clientes
+  robot2: clientes
+  robot3: clientes
+  servidor: servidor
+comenzar
+  AsignarArea(robot1, area1)
+  AsignarArea(robot1, esquina)
+  AsignarArea(robot2, area2)
+  AsignarArea(robot2, esquina)
+  AsignarArea(robot3, area3)
+  AsignarArea(robot3, esquina)
+  AsignarArea(servidor, areaServidor)
+  AsignarArea(servidor, esquina)
+  Iniciar(servidor, 13, 1)
+  Iniciar(robot1, 10, 1) {IMPORTANTE: EL INICIAR ES UN "POS IMPLICITO", POR LO QUE SI A VECES SALE ERROR DE 'POS' PUEDE ESTAR ACA}
+  Iniciar(robot2, 11, 1)
+  Iniciar(robot3, 12, 1)
+fin

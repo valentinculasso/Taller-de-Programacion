@@ -1,0 +1,98 @@
+programa ejercicio5
+procesos
+  proceso juntarPapel (E papeles: numero)
+  comenzar
+    repetir papeles
+      tomarPapel
+  fin
+  proceso depositarPapeles (E papeles: numero)
+  comenzar
+    repetir papeles
+      depositarPapel
+  fin
+  proceso enviarIds 
+  comenzar
+    EnviarMensaje (1, r1)
+    EnviarMensaje (2, r2)
+    EnviarMensaje (3,r3)
+  fin
+  proceso iraCienDepositar (E papeles: numero; E av: numero; E ca:numero)
+  comenzar
+    BloquearEsquina (100,1)
+    Pos (100,1)
+    depositarPapeles (papeles)
+    Pos (av,ca)
+    LiberarEsquina (100,1)
+  fin
+  proceso iraCienTomar (E papeles: numero; E av: numero; E ca: numero)
+  comenzar
+    BloquearEsquina (100,1)
+    Pos (100,1)
+    juntarPapel (papeles)
+    Pos (av,ca)
+    LiberarEsquina (100,1)
+    depositarPapeles (papeles)
+  fin
+  proceso quienEs (E id: numero; E papeles: numero)
+  comenzar 
+    si (id = 1)
+      EnviarMensaje (papeles, r1)
+    sino 
+      si (id = 2)
+        EnviarMensaje (papeles, r2)
+      sino
+        si (id = 3)
+          EnviarMensaje (papeles, r3)
+  fin
+areas
+  areaC: AreaC (100,1,100,1)
+  area1: AreaP (10,1,10,1)
+  area2: AreaP (11,1,11,1)
+  area3: AreaP (12,1,12,1)
+  areaS: AreaP (13,1,13,1)
+robots
+  robot cliente
+  variables
+    id, papeles, av, ca: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    RecibirMensaje (id, servidor)
+    repetir 4
+      EnviarMensaje (id, servidor)
+      RecibirMensaje (papeles, servidor)
+      iraCienTomar (papeles, av, ca)
+  fin
+  robot servidor
+  variables
+    papeles, av, ca, id: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    enviarIds 
+    repetir 12
+      Random (papeles, 1,5)
+      {iraCienDepositar (papeles, av, ca)}
+      RecibirMensaje (id, *)
+      iraCienDepositar (papeles, av,ca)
+      quienEs (id, papeles)
+  fin
+variables
+  servidor: servidor
+  r1: cliente
+  r2: cliente
+  r3: cliente
+comenzar
+  AsignarArea (servidor, areaS)
+  AsignarArea (servidor, areaC)
+  AsignarArea (r1, area1)
+  AsignarArea (r1, areaC)
+  AsignarArea (r2, area2)
+  AsignarArea (r2, areaC)
+  AsignarArea (r3, area3)
+  AsignarArea (r3, areaC)
+  Iniciar (servidor, 13,1)
+  Iniciar (r1, 10,1)
+  Iniciar (r2, 11,1)
+  Iniciar (r3, 12,1)
+fin
