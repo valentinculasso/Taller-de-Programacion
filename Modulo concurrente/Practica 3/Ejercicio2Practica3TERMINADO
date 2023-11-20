@@ -1,0 +1,118 @@
+programa ej2
+procesos
+  proceso juntarpapeles(ES papeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:= papeles + 1
+  fin
+  proceso juntarflores(ES flores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+  proceso RecorrerEscalonPerfecto(E escalon:numero; E direccion:boolean; ES flores: numero; ES papeles: numero)
+  comenzar
+    si(direccion)
+      repetir escalon
+        mover
+      juntarflores(flores) {junto flores en el primer vertice}
+      derecha
+      repetir escalon
+        mover
+      juntarflores(flores) {junto flores en el segundo vertice}
+      repetir 3
+        derecha
+    sino
+      repetir escalon
+        mover
+      juntarpapeles(papeles) {junto flores en el primer vertice}
+      repetir 3
+        derecha
+      repetir escalon
+        mover
+      juntarpapeles(papeles) {junto flores en el segundo vertice}
+      derecha
+  fin
+  proceso EnviarIDs
+  comenzar
+    EnviarMensaje(1, rRojo)
+    EnviarMensaje(2, rAzul)
+  fin
+areas
+  areaRojo: AreaP(1,1, 15, 31)
+  areaMedia: AreaPC(16,16,16,16)
+  areaAzul: AreaP(17,1, 31,31)
+  areaJefe: AreaP(16,1,16,1)
+robots
+  robot rojo
+  variables
+    escalon, id, flores, papeles:numero
+  comenzar
+    flores:= 0
+    papeles:= 0
+    RecibirMensaje(id, rJefe)
+    escalon := 5
+    repetir 5
+      si(escalon = 1)
+        BloquearEsquina(15,15)
+        EnviarMensaje(id, rJefe)
+      RecorrerEscalonPerfecto(escalon, V, flores, papeles)
+      escalon:= escalon - 1
+    repetir 3
+      derecha
+    mover
+    LiberarEsquina(15, 15)
+    escalon:= 2
+    repetir 4
+      RecorrerEscalonPerfecto(escalon, V, flores, papeles)
+      escalon:= escalon + 1
+    Informar(flores)
+  fin
+  robot azul
+  variables
+    escalon, id, flores, papeles:numero
+  comenzar
+    flores:= 0
+    papeles:= 0
+    RecibirMensaje(id, rJefe)
+    escalon := 5
+    repetir 5
+      si(escalon = 1)
+        BloquearEsquina(15,15)
+        EnviarMensaje(id, rJefe)
+      RecorrerEscalonPerfecto(escalon, F, flores, papeles)
+      escalon:= escalon - 1
+    derecha
+    mover
+    LiberarEsquina(15, 15)
+    escalon:= 2
+    repetir 4
+      RecorrerEscalonPerfecto(escalon, F, flores, papeles)
+      escalon:= escalon + 1
+    Informar(papeles)
+  fin
+  robot jefe
+  variables
+    ganador, segundo: numero
+  comenzar
+    EnviarIDs
+    RecibirMensaje(ganador, *)
+    RecibirMensaje(segundo, *)
+    Informar(ganador)
+  fin
+variables
+  rRojo:rojo
+  rAzul:azul
+  rJefe:jefe
+comenzar
+  AsignarArea(rRojo, areaRojo)
+  AsignarArea(rRojo, areaMedia)
+  AsignarArea(rAzul, areaAzul)
+  AsignarArea(rJefe, areaJefe)
+  AsignarArea(rAzul, areaMedia)
+  Iniciar(rRojo, 1,1)
+  Iniciar(rAzul, 31,1)
+  Iniciar(rJefe, 16,1)
+fin

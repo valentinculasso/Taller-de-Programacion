@@ -1,0 +1,98 @@
+programa ejercicio3practica4
+procesos
+  proceso juntarFlor
+  comenzar
+    si(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso limpiar (ES puedo:boolean; E id:numero)
+  variables
+    pos1, pos2: numero
+  comenzar
+    pos1:= PosAv
+    pos2:= PosCa
+    BloquearEsquina(10,10)
+    Pos(10,10)
+    si HayFlorEnLaEsquina
+      tomarFlor
+    sino
+      EnviarMensaje (id,robot5)
+      puedo:= F
+    si(HayFlorEnLaBolsa)
+      BloquearEsquina(11,11) {antes de liberar la esquina 10,10, debo bloquear la esquina 11 y posicionarme}
+      Pos(11, 11) 
+      LiberarEsquina(10, 10) {luego de posicionarme en (11, 11), libero la esquina 10,10}
+      si(HayFlorEnLaBolsa)
+        depositarFlor
+      Pos(pos1, pos2)
+      LiberarEsquina(11, 11)
+    sino
+      LiberarEsquina(10, 10)
+      Pos(pos1, pos2) {si no hay mas flores que depositar, debo volver a la pos inicial}
+  fin
+  proceso enviarIds
+  comenzar
+    EnviarMensaje (1, robot1)
+    EnviarMensaje (2, robot2)
+    EnviarMensaje (3, robot3)
+    EnviarMensaje (4, robot4)
+  fin
+areas
+  trabajar: AreaPC (10,10, 11, 11)
+  areaJefe: AreaP (1,1,1,1)
+  areaR1: AreaP (9,9,9,9)
+  areaR2: AreaP (9,10,9,10)
+  areaR3: AreaP (9,11,9,11)
+  areaR4: AreaP (9,12,9,12)
+robots
+  robot jefe
+  variables
+    primero, segundo, tercero, ultimo, flores, avini, caini: numero
+  comenzar
+    avini:= PosAv
+    caini:= PosCa
+    enviarIds
+    RecibirMensaje (primero,*)
+    RecibirMensaje (segundo,*)
+    RecibirMensaje (tercero,*)
+    RecibirMensaje (ultimo,*)
+    Informar(ultimo)
+    Pos(11, 11) {no hace falta bloquear la esquina xq iria cuando ya todos los robot hayan finalizado}
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+    Pos(avini, caini) {No me especifica que vuelva a la pos inicial, pero bueno, sigo el patron de los demas robots}
+  fin
+  robot florero
+  variables
+    id, flores, av, ca: numero
+    puedo: boolean
+  comenzar
+    flores:=0
+    puedo:= V
+    RecibirMensaje (id, robot5)
+    mientras (puedo)
+      limpiar (puedo,id)
+  fin
+variables
+  robot1: florero
+  robot2: florero
+  robot3: florero
+  robot4: florero
+  robot5: jefe
+comenzar
+  AsignarArea(robot1, trabajar)
+  AsignarArea(robot1, areaR1)
+  AsignarArea(robot2, trabajar)
+  AsignarArea(robot2, areaR2)
+  AsignarArea(robot3, trabajar)
+  AsignarArea(robot3, areaR3)
+  AsignarArea(robot4, trabajar)
+  AsignarArea(robot4, areaR4)
+  AsignarArea(robot5, trabajar)
+  AsignarArea(robot5, areaJefe)
+  Iniciar (robot5, 1,1)
+  Iniciar (robot1, 9,9)
+  Iniciar (robot2, 9,10)
+  Iniciar (robot3, 9,11)
+  Iniciar (robot4, 9,12)
+fin

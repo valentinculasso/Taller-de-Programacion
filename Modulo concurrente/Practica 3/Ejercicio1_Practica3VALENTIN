@@ -1,0 +1,91 @@
+programa Ejercicio1Practica3
+procesos
+  proceso juntarFlores(ES flores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+  proceso juntarPapeles(ES papeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:= papeles + 1
+  fin
+areas
+  areaFloreros: AreaPC(1, 1, 5, 10)
+  areaCompartida: AreaC(10, 10, 10, 10)
+  areaF1: AreaP(6, 10, 6, 10)
+  areaF2: AreaP(7, 10, 7, 10)
+  areaPapeleros: AreaPC(6, 1, 10, 9)
+  areaP1: AreaP(8, 10, 8, 10)
+  areaP2: AreaP(9, 10, 9, 10)
+robots
+  robot floreros
+  variables
+    flores, avinicial, calleinicial, av, calle: numero
+  comenzar
+    flores:= 0
+    avinicial:= PosAv
+    calleinicial:= PosCa
+    repetir 5
+      Random(av, 1, 5) {variable, inicio y fin}
+      Random(calle, 1, 10)
+      BloquearEsquina(av, calle)
+      Pos(av, calle)
+      juntarFlores(flores)
+      Pos(avinicial, calleinicial)
+      LiberarEsquina(av, calle)
+    BloquearEsquina(10, 10)
+    Pos(10, 10)
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+    Pos(avinicial, calleinicial)
+    LiberarEsquina(10, 10)
+  fin
+  robot papeleros
+  variables
+    papeles, avinicial, calleinicial, av, calle: numero
+  comenzar 
+    papeles:= 0
+    avinicial:= PosAv
+    calleinicial:= PosCa
+    repetir 3
+      Random(av, 6, 10)
+      Random(calle, 1, 9)
+      BloquearEsquina(av, calle)
+      Pos(av, calle)
+      juntarPapeles(papeles)
+      Pos(avinicial, calleinicial)
+      LiberarEsquina(av, calle)
+    BloquearEsquina(10, 10)
+    Pos(10, 10)
+    mientras(HayPapelEnLaBolsa)
+      depositarPapel
+    Pos(avinicial, calleinicial)
+    LiberarEsquina(10, 10)
+  fin
+
+variables
+  florero1: floreros
+  florero2: floreros
+  papelero1: papeleros
+  papelero2: papeleros
+comenzar
+  AsignarArea(florero1, areaCompartida)
+  AsignarArea(florero1, areaFloreros)
+  AsignarArea(florero1, areaF1)
+  AsignarArea(florero2, areaCompartida)
+  AsignarArea(florero2, areaFloreros)
+  AsignarArea(florero2, areaF2)
+  AsignarArea(papelero1, areaCompartida)
+  AsignarArea(papelero1, areaPapeleros)
+  AsignarArea(papelero1, areaP1)
+  AsignarArea(papelero2, areaCompartida)
+  AsignarArea(papelero2, areaPapeleros)
+  AsignarArea(papelero2, areaP2)
+  Iniciar(florero1, 6, 10)
+  Iniciar(florero2, 7, 10)
+  Iniciar(papelero1, 8, 10)
+  Iniciar(papelero2, 9, 10)
+fin

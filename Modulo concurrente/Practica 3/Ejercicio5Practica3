@@ -1,0 +1,101 @@
+programa Ejercicio5Practica3
+procesos
+  proceso calcularMax(E cantidad: numero; ES maxid: numero; ES max: numero; E id: numero)
+  comenzar
+    si(cantidad > max)
+      max:= cantidad
+      maxid:= id
+  fin
+  proceso recorrer(ES cantidad: numero; ES puedo: boolean; ES avActual: numero; ES caActual: numero; E id: numero)
+  comenzar
+    BloquearEsquina(11, 11)
+    Pos(11, 11)
+    si(HayPapelEnLaEsquina)
+      tomarPapel
+      cantidad:= cantidad + 1
+    sino
+      EnviarMensaje(id, robotCordinador)
+      EnviarMensaje(cantidad, robotCordinador)
+      puedo:= F
+    Pos(avActual, caActual)
+    LiberarEsquina(11, 11)
+    si((HayPapelEnLaBolsa)&(PosCa <= 100)) {¿Que pasa si llego a la Pos 100? si me muevo, me saldria del mapa}
+      depositarPapel
+      mover 
+      avActual:= PosAv {actualizo la posicion actual (porque me movi)}
+      caActual:= PosCa
+  fin
+  proceso EnviarIDs
+  comenzar
+    EnviarMensaje(1, robot1)
+    EnviarMensaje(2, robot2)
+    EnviarMensaje(3, robot3)
+    EnviarMensaje(4, robot4)
+  fin
+areas
+  areaCord: AreaP(1,1,1,1)
+  areaCompartida: AreaPC(11, 11, 11, 11)
+  area1: AreaP(4, 1, 4, 100)
+  area2: AreaP(6, 1, 6, 100)
+  area3: AreaP(8, 1, 8, 100)
+  area4: AreaP(10, 1, 10, 100)
+robots
+  robot tipo1
+  variables
+    cantidad, avActual, caActual, id: numero
+    puedo: boolean
+  comenzar
+    avActual:= PosAv
+    caActual:= PosCa
+    cantidad:= 0
+    puedo:= V
+    RecibirMensaje(id, robotCordinador)
+    mientras(puedo)
+      recorrer(cantidad, puedo, avActual, caActual, id)
+  fin
+  robot cordinador
+  variables
+    id, cantidad, max, maxid: numero
+  comenzar
+    maxid:= 0
+    max:= 0
+    EnviarIDs
+    repetir 4
+      RecibirMensaje(id, *)
+      si(id = 1)
+        RecibirMensaje(cantidad, robot1)
+      sino
+        si(id = 2)
+          RecibirMensaje(cantidad, robot2)
+        sino
+          si(id = 3)
+            RecibirMensaje(cantidad, robot3)
+          sino
+            si(id = 4)
+              RecibirMensaje(cantidad, robot4)
+      calcularMax(cantidad, maxid, max, id)
+    Informar(maxid)
+  fin
+  
+variables
+  robotCordinador: cordinador
+  robot1: tipo1
+  robot2: tipo1
+  robot3: tipo1
+  robot4: tipo1
+comenzar
+  AsignarArea(robotCordinador, areaCord)
+  AsignarArea(robot1, areaCompartida)
+  AsignarArea(robot1, area1)
+  AsignarArea(robot2, areaCompartida)
+  AsignarArea(robot2, area2)
+  AsignarArea(robot3, areaCompartida)
+  AsignarArea(robot3, area3)
+  AsignarArea(robot4, areaCompartida)
+  AsignarArea(robot4, area4)
+  Iniciar(robotCordinador, 1, 1)
+  Iniciar(robot1, 4, 1)
+  Iniciar(robot2, 6, 1)
+  Iniciar(robot3, 8, 1)
+  Iniciar(robot4, 10, 1)
+fin
