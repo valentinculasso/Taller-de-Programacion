@@ -1,0 +1,41 @@
+programa Ejercicio4
+procesos
+  proceso limpiarAvenidas(E valorAv: numero) {par: limpian papeles}
+  comenzar
+    si((valorAv mod 2) = 0)
+      repetir 5
+        repetir 99
+          mientras(HayPapelEnLaEsquina)
+            tomarPapel
+          mover
+        Pos(PosAv+1, 1)
+      Pos(PosAv+5, 1)
+    sino {impar: limpian flores}
+      repetir 5
+        repetir 99
+          mientras(HayFlorEnLaBolsa)
+            tomarFlor
+          mover
+        Pos(PosAv+1, +1)
+      Pos(PosAv+5, 1)
+  fin
+areas
+  ciudad: AreaC(1, 1, 100, 100)
+robots
+  robot tipo1
+  comenzar
+    repetir 10
+      limpiarAvenidas(PosAv)
+  fin
+
+  
+variables
+  robot1: tipo1
+  robot2: tipo1
+comenzar
+  AsignarArea(robot1, ciudad)
+  AsignarArea(robot2, ciudad)
+  Iniciar(robot1, 1, 1)
+  Iniciar(robot2, 6, 1)
+
+fin

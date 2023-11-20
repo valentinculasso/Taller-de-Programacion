@@ -1,0 +1,78 @@
+programa Ejercicio5Practica1
+procesos
+  proceso juntar(E ok: boolean)
+  comenzar
+    si(ok)
+      mientras(HayFlorEnLaEsquina)
+        tomarFlor
+    sino
+      mientras(HayPapelEnLaEsquina)
+        tomarPapel
+  fin
+  proceso recorrer(E cant: numero;E ok: boolean)
+  variables
+    av: numero
+    ca: numero
+    moverse: boolean
+  comenzar
+    av:= PosAv {Guardo la pos inicial de la avenida}
+    ca:= PosCa {Guardo la pos inicial de la calle}
+    moverse:= V
+    repetir 2
+      repetir cant
+        juntar(ok)
+        mover
+      juntar(ok)
+      si(ok) {si es verdadero es el robot 1 o el robot 3}
+        si(moverse)
+          Pos(av, PosCa-5)
+          moverse:= F
+      sino {si es falso es el robot 2 o el robot 4}
+        si(moverse)
+          Pos(PosAv-5, ca)
+          moverse:= F
+  fin
+areas
+  zona1: AreaP(1, 74, 17, 81)
+  zona2: AreaP(74, 79, 81, 100)
+  zona3: AreaP(69, 9, 100, 16)
+  zona4: AreaP(9, 1, 16, 12)
+robots
+  robot tipo1
+  comenzar
+    si((PosAv=1)&(PosCa=80))|((PosAv=70)&(PosCa=15))
+      derecha
+      si((PosAv=1)&(PosCa=80))  
+        recorrer(15, V)            {Si le mando V (verdadero) junta flores. Si le mando F (falso) junta papeles.}
+      si(PosAv=70)&(PosCa=15)
+        recorrer(30, V)
+      mientras(HayFlorEnLaBolsa)
+        depositarFlor
+    sino
+      si((PosAv=80)&(PosCa=80))|((PosAv=15)&(PosCa=1))
+        si(PosAv=80)&(PosCa=80)    {Si le mando V (verdadero) junta flores. Si le mando F (falso) junta papeles.}
+          recorrer(20, F)
+          Pos(80,80)
+          mientras(HayPapelEnLaBolsa)
+            depositarPapel
+        si(PosAv=15)&(PosCa=1)
+          recorrer(10, F)
+          Pos(15,1)
+          mientras(HayPapelEnLaBolsa)
+            depositarPapel
+  fin
+variables
+  robot1: tipo1
+  robot2: tipo1
+  robot3: tipo1
+  robot4: tipo1
+comenzar
+  AsignarArea(robot1, zona1)
+  AsignarArea(robot2, zona2)
+  AsignarArea(robot3, zona3)
+  AsignarArea(robot4, zona4)
+  Iniciar(robot1, 1, 80)
+  Iniciar(robot2, 80, 80)
+  Iniciar(robot3, 70, 15)
+  Iniciar(robot4, 15, 1)
+fin
