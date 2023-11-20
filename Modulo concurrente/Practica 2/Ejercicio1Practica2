@@ -1,0 +1,103 @@
+programa Ejercicio1Practica2
+procesos
+  proceso juntar(ES flores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+  proceso recorrer(ES flores: numero)
+  comenzar
+    repetir 9
+      juntar(flores)
+      mover
+    juntar(flores)
+  fin
+  proceso calcularMax(ES max: numero; E flores: numero; ES idMax: numero; E id: numero)
+  comenzar
+    si(flores>max)
+      max:= flores
+      idMax:= id
+  fin
+areas
+  areaRobot1: AreaP(1,1, 1, 10)
+  areaRobot2: AreaP(2, 11, 2, 20)
+  areaRobot3: AreaP(3, 21, 3, 30)
+  areaRobot4: AreaP(4, 31, 4, 40)
+  areaRobot5: AreaP(5, 41, 5, 50)
+  areaRobot6: AreaP(6, 51, 6, 60)
+  areaFisc: AreaP(2, 1, 2, 1)
+
+robots
+  robot tipo1
+  variables
+    flores: numero
+    ID: numero
+  comenzar
+    flores:= 0
+    RecibirMensaje(ID, fiscalizador)
+    recorrer(flores)
+    EnviarMensaje(ID, fiscalizador)
+    EnviarMensaje(flores, fiscalizador)
+  fin
+  robot fiscalizador
+  variables
+    floresRobot: numero
+    maximo: numero
+    IDMax: numero
+    ID: numero
+  comenzar
+    maximo:= 0
+    EnviarMensaje(1, robot1)
+    EnviarMensaje(2, robot2)
+    EnviarMensaje(3, robot3)
+    EnviarMensaje(4, robot4)
+    EnviarMensaje(5, robot5)
+    EnviarMensaje(6, robot6)
+    repetir 6
+      RecibirMensaje(ID, *)
+      si(ID = 1)
+        RecibirMensaje(floresRobot, robot1)
+      sino
+        si(ID = 2)
+          RecibirMensaje(floresRobot, robot2)
+        sino
+          si(ID=3)
+            RecibirMensaje(floresRobot, robot3)
+          sino
+            si(ID=4)
+              RecibirMensaje(floresRobot, robot4)
+            sino
+              si(ID=5)
+                RecibirMensaje(floresRobot, robot5)
+              sino
+                si(ID=6)
+                  RecibirMensaje(floresRobot, robot6)
+      calcularMax(maximo, floresRobot, IDMax, ID)
+    Informar(maximo)
+    Informar(IDMax)
+  fin
+variables
+  robot1: tipo1
+  robot2: tipo1
+  robot3: tipo1
+  robot4: tipo1
+  robot5: tipo1
+  robot6: tipo1
+  fiscalizador: fiscalizador
+comenzar
+  AsignarArea(robot1, areaRobot1)
+  AsignarArea(robot2, areaRobot2)
+  AsignarArea(robot3, areaRobot3)
+  AsignarArea(robot4, areaRobot4)
+  AsignarArea(robot5, areaRobot5)
+  AsignarArea(robot6, areaRobot6)
+  AsignarArea(fiscalizador, areaFisc)
+  Iniciar(robot1, 1, 1)
+  Iniciar(robot2, 2, 11)
+  Iniciar(robot3, 3, 21)
+  Iniciar(robot4, 4, 31)
+  Iniciar(robot5, 5, 41)
+  Iniciar(robot6, 6, 51)
+  Iniciar(fiscalizador, 2, 1)
+fin

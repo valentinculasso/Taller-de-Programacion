@@ -1,0 +1,94 @@
+programa Ejercicio3Practica2
+procesos
+  proceso juntarPapeles(ES papeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:= papeles + 1
+  fin
+  proceso juntarFlores(ES flores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+areas
+  areaA: AreaP(1, 1, 40, 1)
+  areaB: AreaP(1, 5, 40, 5)
+robots
+  robot tipoA1 {A1}
+  variables
+    papeles: numero
+  comenzar
+    papeles:= 0
+    derecha
+    repetir 2
+      repetir 9
+        juntarPapeles(papeles)
+        mover
+      EnviarMensaje(papeles, robotA2)
+      si(PosAv <> 30)
+        Pos(PosAv+11, 1)
+      RecibirMensaje(papeles, robotA2)
+  fin
+  robot tipoA2 {A2}
+  variables
+    papeles: numero
+  comenzar
+    derecha
+    repetir 2
+      RecibirMensaje(papeles, robotA1)
+      repetir 9
+        juntarPapeles(papeles)
+        mover
+      EnviarMensaje(papeles, robotA1)
+      si(PosAv <> 40)
+        Pos(PosAv+11, 1)
+    Informar(papeles)
+  fin
+  robot tipoB1 {B1}
+  variables
+    flores: numero
+  comenzar
+    flores:= 0
+    derecha
+    repetir 2
+      repetir 9
+        juntarFlores(flores)
+        mover
+      EnviarMensaje(flores, robotB2)
+      si(PosAv <> 30)
+        Pos(PosAv+11, 5)
+      RecibirMensaje(flores, robotB2)
+  fin
+  robot tipoB2 {B2}
+  variables
+    flores: numero
+  comenzar
+    derecha
+    repetir 2
+      RecibirMensaje(flores, robotB1)
+      repetir 9
+        juntarFlores(flores)
+        mover
+      EnviarMensaje(flores, robotB1)
+      si(PosAv <> 40)
+        Pos(PosAv+11, 5)
+    Informar(flores)
+  fin
+variables
+  robotA1: tipoA1
+  robotA2: tipoA2
+  robotB1: tipoB1
+  robotB2: tipoB2
+comenzar
+  AsignarArea(robotA1, areaA)
+  AsignarArea(robotA2, areaA)
+  AsignarArea(robotB1, areaB)
+  AsignarArea(robotB2, areaB)
+  Iniciar(robotA1, 1, 1)
+  Iniciar(robotA2, 11, 1)
+  Iniciar(robotB1, 1, 5)
+  Iniciar(robotB2, 11, 5)
+fin
+  

@@ -1,0 +1,132 @@
+programa Ejercicio4Practica2
+procesos
+  proceso juntarFlores (ES flores: numero)
+  comenzar
+    mientras HayFlorEnLaEsquina 
+      tomarFlor
+      flores:= flores+1
+  fin
+  proceso juntarPapeles (ES papeles: numero)
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+      papeles:= papeles+1
+  fin
+  proceso limpiar (ES total: numero)
+  variables
+    flores, papeles, pos1, pos2, av, ca: numero
+  comenzar  
+    flores:=0
+    papeles:=0
+    pos1:= PosAv {se guarda su pos inicial}
+    pos2:= PosCa
+    Random (av, 25,75) {genera una nueva pos random}
+    Random (ca, 25,75)
+    Pos (av,ca) {pos nueva}
+    juntarFlores (flores)
+    juntarPapeles (papeles)
+    total:= total + papeles + flores
+    Pos (pos1, pos2) {vuelve a la inicial que previamente habia guardado}
+  fin
+  proceso maximo (ES max: numero; ES idmax: numero; E total: numero; E id: numero)
+  comenzar
+    si ( total > max) 
+      max:= total
+      idmax:= id
+  fin
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje (1, robot1)   
+    EnviarMensaje (2, robot2)
+    EnviarMensaje (3, robot3)
+    EnviarMensaje (4, robot4)
+  fin
+  proceso enviarFalso
+  comenzar
+    EnviarMensaje (F, robot1)
+    EnviarMensaje (F, robot2)
+    EnviarMensaje (F, robot3)
+    EnviarMensaje (F, robot4)
+  fin
+  proceso enviarMax (E idmax: numero)
+  comenzar
+    EnviarMensaje (idmax, robot1)
+    EnviarMensaje (idmax, robot2)
+    EnviarMensaje (idmax, robot3)
+    EnviarMensaje (idmax, robot4)
+  fin
+
+areas
+  cuadrado: AreaPC (25,25, 75,75) 
+  areaFiscal: AreaP (1,1,1,1)
+  area1: AreaP (25,1,25,1)
+  area2: AreaP (30,1,30,1) 
+  area3: AreaP (35,1,35,1) 
+  area4: AreaP (40,1,40,1) 
+
+robots
+  robot juntador
+  variables
+    total, id, ganador: numero
+    puedo: boolean
+  comenzar
+    total:= 0
+    RecibirMensaje(id, robotJefe)
+    RecibirMensaje(puedo, robotJefe)
+    mientras(puedo)
+      limpiar(total)
+      EnviarMensaje(id, robotJefe)
+      RecibirMensaje(puedo, robotJefe) {false}
+    EnviarMensaje(id, robotJefe) {ultimo}
+    EnviarMensaje(total, robotJefe) {ultimo}
+    RecibirMensaje(ganador, robotJefe) {recibe ganador despues de max}
+    si(ganador = id) {compara}
+      Pos(50, 50)
+  fin
+  robot jefe
+  variables
+    total, maximo, idmaximo, id: numero
+  comenzar
+    enviarIDs {asigno un ID a cada jugador}
+    repetir 10
+      EnviarMensaje(V, *)
+      RecibirMensaje(id, *)
+    enviarFalso {le envio false a todos los jugadores}
+    repetir 4
+      RecibirMensaje(id, *)
+      si(id = 1)
+        RecibirMensaje(total, robot1)
+      sino
+        si(id = 2)
+          RecibirMensaje(total, robot2)
+        sino
+          si(id = 3)
+            RecibirMensaje(total, robot3)
+          sino
+            si(id = 4)
+              RecibirMensaje(total, robot4)
+      max(maximo, idmaximo, total, id)
+    enviarMax(idmax)
+  fin
+variables
+  robot1: juntador
+  robot2: juntador
+  robot3: juntador
+  robot4: juntador
+  robotJefe: jefe
+comenzar
+  AsignarArea (robot1, cuadrado)
+  AsignarArea (robot1, area1)
+  AsignarArea (robot2, cuadrado)
+  AsignarArea (robot2, area2)
+  AsignarArea (robot3, cuadrado)
+  AsignarArea (robot3, area3)
+  AsignarArea (robot4, cuadrado)
+  AsignarArea (robot4, area4)
+  AsignarArea (robotJefe, areaFiscal)
+  Iniciar (robot1, 25,1) 
+  Iniciar (robot2, 30,1)
+  Iniciar (robot3, 35,1)
+  Iniciar (robot4, 40,1)
+  Iniciar (robotJefe, 1,1)
+fin
