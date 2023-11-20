@@ -1,0 +1,114 @@
+programa Parcial
+procesos
+  proceso juntarPapeles2
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso juntarPapeles(ES cant: numero)
+  comenzar
+    si(HayPapelEnLaEsquina)
+      mientras(HayPapelEnLaEsquina)
+        tomarPapel
+      cant:= cant + 1
+  fin
+  proceso recorrerAlto(E alto: numero; ES cant: numero)
+  comenzar
+    repetir alto
+      juntarPapeles(cant)
+      mover
+  fin
+  proceso recorrerAncho(E ancho: numero; ES cant: numero)
+  comenzar
+    repetir ancho
+      juntarPapeles(cant)
+      mover
+  fin
+  proceso dejarPapeles
+  comenzar
+    mientras(HayPapelEnLaBolsa)
+      depositarPapel
+  fin
+  proceso depositarPapeles
+  variables
+    avAct, caAct: numero
+  comenzar
+    avAct:= PosAv
+    caAct:= PosCa
+    BloquearEsquina(25, 25)
+    Pos(25, 25)
+    dejarPapeles
+    Pos(avAct, caAct)
+    LiberarEsquina(25, 25)
+  fin
+areas
+  area1: AreaP(2, 1, 18, 13)
+  area2: AreaP(32, 1, 48, 13)
+  area3: AreaP(62, 1, 78, 13)
+  areaF: AreaP(1, 1, 1, 1)
+  areaC: AreaC(25, 25, 25, 25)
+robots
+  robot fiscalizador
+  variables
+    ok: boolean
+    cantidad, cant1, cant2, cant3: numero
+    av, ca: numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    cantidad:= 0
+    repetir 4 {deberia ser 4 (creo)}
+      RecibirMensaje(ok, robot1)
+      RecibirMensaje(ok, robot2)
+      RecibirMensaje(ok, robot3)
+      EnviarMensaje(V, robot1)
+      EnviarMensaje(V, robot2)
+      EnviarMensaje(V, robot3)
+    RecibirMensaje(cant1, robot1)
+    RecibirMensaje(cant2, robot2)
+    RecibirMensaje(cant3, robot3)
+    cantidad:= cant1 + cant2 + cant3
+    {Como el resto de robots ya finalizaron, no debo bloquear esquina}
+    Pos(25, 25)
+    juntarPapeles2
+    Pos(av, ca)
+    Informar(cantidad) {Informa la cantidad de esquinas que se vaciaron (no cuenta esquinas ya vacias)}
+  fin
+  robot papeleros
+  variables
+    alto, ancho, cantidad: numero
+    ok: boolean
+  comenzar
+    Random(alto, 1, 3)
+    Random(ancho, 2, 4)
+    repetir 4
+      recorrerAlto(alto, cantidad)
+      derecha
+      depositarPapeles
+      recorrerAncho(ancho, cantidad)
+      repetir 3
+        derecha
+      depositarPapeles
+      EnviarMensaje(V, fiscalizador)
+      RecibirMensaje(ok, fiscalizador)
+    EnviarMensaje(cantidad, fiscalizador)
+  fin
+variables
+  robot1: papeleros
+  robot2: papeleros
+  robot3: papeleros
+  fiscalizador: fiscalizador
+comenzar
+  AsignarArea(fiscalizador, areaF)
+  AsignarArea(fiscalizador, areaC)
+  AsignarArea(robot1, area1)
+  AsignarArea(robot1, areaC)
+  AsignarArea(robot2, area2)
+  AsignarArea(robot2, areaC)
+  AsignarArea(robot3, area3)
+  AsignarArea(robot3, areaC)
+  Iniciar(fiscalizador, 1, 1)
+  Iniciar(robot1, 2, 1)
+  Iniciar(robot2, 32, 1)
+  Iniciar(robot3, 62, 1)
+fin

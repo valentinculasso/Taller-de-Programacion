@@ -1,0 +1,110 @@
+programa EjercicioParcial2023ABRIL11
+procesos
+  proceso AsignarIDs
+  comenzar
+    EnviarMensaje(1, robot1)
+    EnviarMensaje(2, robot2)
+    EnviarMensaje(3, robot3)
+  fin
+  proceso juntarFlores(ES flores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:= flores + 1
+  fin
+  proceso depositarFlores(ES flores: numero)
+  variables
+    avAct, caAct: numero
+  comenzar
+    avAct:= PosAv
+    caAct:= PosCa
+    repetir flores
+      BloquearEsquina(25, 25)
+      Pos(25, 25)
+      si(HayFlorEnLaBolsa)
+        depositarFlor
+      Pos(avAct, caAct)
+      LiberarEsquina(25, 25)
+    flores:= 0
+  fin
+  proceso recorrerRectangulo(E alto: numero; E ancho: numero; ES flores: numero; ES cantFlores: numero)
+  variables
+    avActual, caActual: numero
+  comenzar
+    repetir 2
+      repetir alto
+        juntarFlores(flores)
+        mover
+      derecha
+      cantFlores:= cantFlores + flores
+      depositarFlores(flores) {luego de este modulo, la variable flores se reinicia a 0 ya que termino un lado y las deposito en (25,25)}
+      repetir ancho
+        juntarFlores(flores)
+        mover
+      derecha
+      cantFlores:= cantFlores + flores
+      depositarFlores(flores)
+  fin
+areas
+  rectangulo1: AreaP(1, 1, 6, 11)
+  rectangulo2: AreaP(7, 1, 12, 11)
+  rectangulo3: AreaP(13, 1, 18, 11)
+  esquina25: AreaPC(25, 25, 25, 25)
+  cord: AreaP(24, 24, 24, 24)
+robots
+  robot recolector
+  variables
+    flores, cantFlores, alto, ancho, id: numero
+  comenzar
+    flores:= 0
+    cantFlores:= 0
+    RecibirMensaje(id, coordinador)
+    RecibirMensaje(alto, coordinador)
+    RecibirMensaje(ancho, coordinador)
+    recorrerRectangulo(alto, ancho, flores, cantFlores)
+    EnviarMensaje(id, coordinador)
+    EnviarMensaje(cantFlores, coordinador)
+  fin
+  robot coordinador
+  variables
+    alto, ancho, flores, max, id, maxID: numero
+  comenzar
+    AsignarIDs
+    Random(alto, 1, 10)
+    Random(ancho, 1, 5)
+    EnviarMensaje(alto, robot1)
+    EnviarMensaje(ancho, robot1)
+    Random(alto, 1, 10)
+    Random(ancho, 1, 5)
+    EnviarMensaje(alto, robot2)
+    EnviarMensaje(ancho, robot2)
+    Random(alto, 1, 10)
+    Random(ancho, 1, 5)
+    EnviarMensaje(alto, robot3)
+    EnviarMensaje(ancho, robot3)
+    repetir 3
+      RecibirMensaje(id, *)
+      RecibirMensaje(flores, *)
+      si(flores > max)
+        max:= flores
+        maxID:= id
+    Informar(maxID)
+  fin
+variables
+  robot1: recolector
+  robot2: recolector
+  robot3: recolector
+  coordinador: coordinador
+comenzar
+  AsignarArea(robot1, rectangulo1)
+  AsignarArea(robot1, esquina25)
+  AsignarArea(robot2, rectangulo2)
+  AsignarArea(robot2, esquina25)
+  AsignarArea(robot3, rectangulo3)
+  AsignarArea(robot3, esquina25)
+  AsignarArea(coordinador, cord)
+  Iniciar(coordinador, 24, 24)
+  Iniciar(robot1, 1, 1)
+  Iniciar(robot2, 7, 1)
+  Iniciar(robot3, 13, 1)
+fin
