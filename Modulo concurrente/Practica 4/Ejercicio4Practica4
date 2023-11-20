@@ -1,0 +1,145 @@
+programa Ejercicio4Practica4
+procesos
+  proceso juntarFlores
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso juntarPapeles
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso vaciarBolsa
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      depositarPapel
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+  fin
+  proceso realizarTarea(E tarea: numero; ES puedo: boolean)
+  variables
+    avInicial, caInicial, avenida, calle: numero
+  comenzar
+    avInicial:= PosAv
+    caInicial:= PosCa
+    si(tarea = 1)
+      RecibirMensaje(avenida, jefe)
+      RecibirMensaje(calle, jefe)
+      BloquearEsquina(avenida, calle)
+      Pos(avenida, calle)
+      juntarFlores
+      Pos(avInicial, caInicial)
+      LiberarEsquina(avenida, calle)
+    sino
+      si(tarea = 2)
+        RecibirMensaje(avenida, jefe)
+        RecibirMensaje(calle, jefe)
+        BloquearEsquina(avenida, calle)
+        Pos(avenida, calle)
+        juntarPapeles
+        Pos(avInicial, caInicial)
+        LiberarEsquina(avenida, calle)
+      sino
+        si(tarea = 3)
+          RecibirMensaje(avenida, jefe)
+          RecibirMensaje(calle, jefe)
+          BloquearEsquina(avenida, calle)
+          Pos(avenida, calle)
+          vaciarBolsa
+          Pos(avInicial, caInicial)
+          LiberarEsquina(avenida, calle)
+  fin
+  proceso EnviarIDs
+  comenzar
+    EnviarMensaje(1, trabajador1)
+    EnviarMensaje(2, trabajador2)
+  fin
+  proceso EnviarTarea(E id: numero; E tarea: numero; E avenida: numero; E calle: numero)
+  comenzar
+    si(id = 1)
+      EnviarMensaje(tarea, trabajador1)
+      EnviarMensaje(avenida, trabajador1)
+      EnviarMensaje(calle, trabajador1)
+    sino
+      EnviarMensaje(tarea, trabajador2)
+      EnviarMensaje(avenida, trabajador2)
+      EnviarMensaje(calle, trabajador2)
+  fin
+  proceso RecibirMensajeTerminar(E id: numero)
+  variables
+    termino: boolean
+  comenzar
+    si(id = 1)
+      RecibirMensaje(termino, trabajador1)
+    sino
+      RecibirMensaje(termino, trabajador2)
+  fin
+areas
+  cuadrante: AreaPC(2, 2, 100, 100)
+  areaJefe: AreaP(1, 1, 1, 1)
+  areaT1: AreaP(2, 1, 2, 1)
+  areaT2: AreaP(3, 1, 3, 1)
+robots
+  robot jefe
+  variables
+    id, tarea, avenida, calle: numero
+    finalizo1, finalizo2: boolean
+  comenzar
+    EnviarIDs
+    repetir 10
+    {ANDA PERFECTO, NOMAS QUE SI UN ROBOT TERMINA, SE LE PUEDE SEGUIR ASIGNANDO TAREAS, Y NO SE SI EN ESE CASO, LA TAREA LA DEBERIA REALIZAR EL OTRO}
+      Random(id, 1, 2)
+      si(id = 1)&(finalizo1 = F)
+        Random(tarea, 1, 4)
+        Informar(tarea)
+        si(tarea = 4)
+          finalizo1:= V
+        sino
+          Random(avenida, 2, 100)
+          Random(calle, 2, 100)
+          EnviarTarea(id, tarea, avenida, calle)
+          RecibirMensajeTerminar(id)
+      sino
+        si(finalizo2 = F)
+          id:= 2 {le asigno siempre q entra al sino id=2, entonces si inicialmente el id=1 pero el robot1 ya finalizo, la tarea se le asignaria si o si al robot2}
+          Random(tarea, 1, 4)
+          Informar(tarea)
+          si(tarea = 4)
+            finalizo2:= V
+          sino
+            Random(avenida, 2, 100)
+            Random(calle, 2, 100)
+            EnviarTarea(id, tarea, avenida, calle)
+            RecibirMensajeTerminar(id)
+    EnviarMensaje(4, trabajador1)
+    EnviarMensaje(4, trabajador2)
+  fin
+  robot trabajador
+  variables
+    tarea, id: numero
+    puedo: boolean
+  comenzar
+    RecibirMensaje(id, jefe)
+    puedo:= V
+    mientras(puedo)
+      RecibirMensaje(tarea, jefe)
+      si(tarea = 4)
+        puedo:= F
+      realizarTarea(tarea, puedo)
+      EnviarMensaje(V, jefe) {le envio que termino la tarea}
+  fin
+variables
+  trabajador1: trabajador
+  trabajador2: trabajador
+  jefe: jefe
+comenzar
+  AsignarArea(trabajador1, areaT1)
+  AsignarArea(trabajador1, cuadrante)
+  AsignarArea(trabajador2, areaT2)
+  AsignarArea(trabajador2, cuadrante)
+  AsignarArea(jefe, areaJefe)
+  Iniciar(trabajador1, 2, 1)
+  Iniciar(trabajador2, 3, 1)
+  Iniciar(jefe, 1, 1)
+fin

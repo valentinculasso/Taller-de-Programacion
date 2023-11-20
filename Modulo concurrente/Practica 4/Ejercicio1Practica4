@@ -1,0 +1,109 @@
+programa Ejercicio1Practica4
+procesos
+  proceso EnviarIDs
+  comenzar
+    EnviarMensaje(1, robot1)
+    EnviarMensaje(2, robot2)
+    EnviarMensaje(3, robot3)
+  fin
+  proceso RecibirPos(ES avenida: numero; ES calle: numero; E id: numero)
+  comenzar
+    si(id = 1)
+      RecibirMensaje(avenida, robot1)
+      RecibirMensaje(calle, robot1)
+    sino
+      si(id = 2)
+        RecibirMensaje(avenida, robot2)
+        RecibirMensaje(calle, robot2)
+      sino
+        si (id = 3)
+          RecibirMensaje(avenida, robot3)
+          RecibirMensaje(calle, robot3)
+  fin
+  proceso EnviarACK(E id: numero)
+  comenzar
+    si(id = 1)
+      EnviarMensaje(V, robot1)
+    sino
+      si(id = 2)
+        EnviarMensaje(V, robot2)
+      sino
+        si (id = 3)
+          EnviarMensaje(V, robot3)
+  fin
+  proceso juntarFlores(E flores: numero)
+  comenzar
+    repetir flores
+      tomarFlor
+  fin
+  proceso depositarFlores(E flores: numero)
+  comenzar
+    mientras(HayFlorEnLaBolsa)&(PosCa < 100)
+      depositarFlor
+      mover
+  fin
+areas
+  Aservidor: AreaP(100, 100, 100, 100)
+  Arobot1: AreaPC(1, 1, 1, 100)
+  Arobot2: AreaPC(2, 1, 2, 100)
+  Arobot3: AreaPC(3, 1, 3, 100)
+robots
+  robot clientes
+  variables
+    id, cantFlores, calle, avenida: numero
+    ok: boolean
+  comenzar
+    avenida:= PosAv
+    RecibirMensaje(id, RobotServidor)
+    mientras(PosCa < 100)
+      Random(cantFlores, 1, 4)
+      EnviarMensaje(id, RobotServidor)
+      EnviarMensaje(cantFlores, RobotServidor)
+      EnviarMensaje(avenida, RobotServidor)
+      calle:= PosCa + 1
+      EnviarMensaje(calle, RobotServidor)
+      RecibirMensaje(ok, RobotServidor)        {Recibe ACK}
+      Pos(avenida, calle)
+      juntarFlores(cantFlores)
+      Pos(avenida, calle-1) {pues, antes le habia sumado 1}
+      depositarFlores(cantFlores)
+    EnviarMensaje(id, RobotServidor) {le envio el id, y la cant = 0)}
+    EnviarMensaje(0, RobotServidor)
+  fin
+  robot servidor
+  variables
+    id, cantFlores, calle, avenida, cantidad: numero
+  comenzar
+    cantidad:= 0
+    EnviarIDs
+    mientras(cantidad < 3)
+      RecibirMensaje(id, *)
+      RecibirMensaje(cantFlores, *)
+      si(cantFlores <> 0)
+        RecibirPos(avenida, calle, id)
+        Pos(avenida, calle) {Me ubico en la pos del robot actual + 1 y luego le deposito las flores}
+        repetir cantFlores {podria hacerle un modulo, pero por 2 lineas, no creo q haga falta}
+          depositarFlor
+        Pos(100, 100)
+        EnviarACK(id)
+      sino
+        cantidad:= cantidad + 1
+  fin
+variables
+  RobotServidor: servidor
+  robot1: clientes
+  robot2: clientes
+  robot3: clientes
+comenzar
+  AsignarArea(RobotServidor, Aservidor)
+  AsignarArea(RobotServidor, Arobot1)
+  AsignarArea(RobotServidor, Arobot2)
+  AsignarArea(RobotServidor, Arobot3)
+  AsignarArea(robot1, Arobot1)
+  AsignarArea(robot2, Arobot2)
+  AsignarArea(robot3, Arobot3)
+  Iniciar(RobotServidor, 100, 100)
+  Iniciar(robot1, 1, 1)
+  Iniciar(robot2, 2, 1)
+  Iniciar(robot3, 3, 1)
+fin

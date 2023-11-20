@@ -1,0 +1,86 @@
+programa Ejercicio2Practica4
+procesos
+  proceso juntarPapeles(ES papeles: numero; E cant: numero)
+  comenzar
+    mientras((HayPapelEnLaEsquina)&(papeles < cant))
+      tomarPapel
+      papeles:= papeles + 1
+  fin
+  proceso depositarPapeles(E papeles: numero)
+  comenzar
+    repetir papeles
+      depositarPapel
+  fin
+areas
+  AreaComp: AreaC(50, 50, 50, 50)
+  Aprod1: AreaP(5, 1, 5, 100)
+  Aprod2: AreaP(10, 1, 10, 100)
+  Aconsumidor1: AreaP(11, 1, 11, 1)
+  Aconsumidor2: AreaP(12, 1, 12, 1)
+robots
+  robot productores
+  variables
+    papeles, calle, avenida: numero
+  comenzar
+    papeles:= 0
+    mientras(PosCa < 100)
+      juntarPapeles(papeles, 5)
+      si(papeles = 5)
+        avenida:= PosAv {guardo pos actual}
+        calle:= PosCa
+        BloquearEsquina(50, 50)
+        Pos(50, 50)
+        depositarPapeles(papeles)
+        papeles:= 0 {lo reinicio porq esto es un "contador"}
+        Pos(avenida, calle)
+        LiberarEsquina(50, 50)
+      sino
+        mover
+  fin
+  robot consumidores
+  variables
+    cantPapeles, papeles, cantidad, avenida, calle: numero
+  comenzar
+    cantidad:= 0
+    avenida:= PosAv
+    calle:= PosCa
+    mientras(cantidad <> 8)
+      papeles:= 0
+      Random(cantPapeles, 2, 4)
+      BloquearEsquina(50, 50)
+      Pos(50, 50)
+      si(HayPapelEnLaEsquina)
+        juntarPapeles(papeles, cantPapeles)
+        si(cantPapeles = papeles)
+          Pos(avenida, calle)
+          LiberarEsquina(50, 50)
+          depositarPapeles(cantPapeles)
+          cantidad:= 0
+        sino
+          cantidad:= cantidad + 1
+          Pos(avenida, calle)
+          LiberarEsquina(50, 50)
+      sino
+        cantidad:= cantidad + 1
+        Pos(avenida, calle)
+        LiberarEsquina(50, 50)
+  fin
+variables
+  rProductor1: productores
+  rProductor2: productores
+  rConsumidor1: consumidores
+  rConsumidor2: consumidores
+comenzar
+  AsignarArea(rProductor1, AreaComp)
+  AsignarArea(rProductor2, AreaComp)
+  AsignarArea(rConsumidor1, AreaComp)
+  AsignarArea(rConsumidor2, AreaComp)
+  AsignarArea(rProductor1, Aprod1)
+  AsignarArea(rProductor2, Aprod2)
+  AsignarArea(rConsumidor1, Aconsumidor1)
+  AsignarArea(rConsumidor2, Aconsumidor2)
+  Iniciar(rProductor1, 5, 1)
+  Iniciar(rProductor2, 10, 1)
+  Iniciar(rConsumidor1, 11, 1)
+  Iniciar(rConsumidor2, 12, 1)
+fin
