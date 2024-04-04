@@ -101,7 +101,7 @@ begin
 	ult:= dimL;
 	medio:= (pri + ult) div 2; 							// si dimL es 100, medio es 100/2 = 50 + 1?
 	while(pri <= ult)and(v[medio].codigo <> codigo)do begin
-		if(v[medio].codigo < codigo)then begin
+		if(codigo < v[medio].codigo)then begin
 			ult:= medio - 1;
 		end
 		else begin
